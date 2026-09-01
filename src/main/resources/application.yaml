@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: authentication-application
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mtsn22_uas
+    username: postgres
+    password: Admin123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: mishashafa13@gmail.com
+    password: hnya gaqe vjtu qhtx
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+support:
+  email: mishashafa13@gmail.com

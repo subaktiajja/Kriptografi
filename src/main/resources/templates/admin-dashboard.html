@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+
+    <!-- Judul tab browser -->
+    <title>Dashboard Admin</title>
+
+    <!-- Supaya tampilan responsif di laptop maupun HP -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+      /* =====================================================
+         RESET DASAR
+         Digunakan agar ukuran elemen lebih stabil dan rapi.
+      ===================================================== */
+      * {
+        box-sizing: border-box;
+      }
+
+      /* =====================================================
+         BACKGROUND UTAMA HALAMAN
+         Bagian ini hanya mempercantik warna latar belakang.
+         Tidak mengubah fungsi dashboard.
+      ===================================================== */
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background:
+          radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 35%), radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.16), transparent 35%), linear-gradient(135deg, #eef4ff 0%, #f8fafc 48%, #ecfdf5 100%);
+        color: #1f2937;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      /* =====================================================
+         SIDEBAR KIRI
+         Sidebar tetap fixed di kiri seperti sebelumnya.
+         Hanya warnanya dibuat lebih modern dengan gradasi.
+      ===================================================== */
+      .sidebar {
+        width: 250px;
+        min-height: 100vh;
+        background: linear-gradient(180deg, #0f172a 0%, #1e293b 55%, #111827 100%);
+        color: white;
+        position: fixed;
+        left: 0;
+        top: 0;
+        padding: 24px 16px;
+        box-shadow: 8px 0 30px rgba(15, 23, 42, 0.22);
+        z-index: 10;
+        overflow: hidden;
+      }
+
+      /* Efek cahaya halus pada sidebar */
+      .sidebar::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top, rgba(59, 130, 246, 0.24), transparent 35%), radial-gradient(circle at bottom, rgba(16, 185, 129, 0.16), transparent 35%);
+        pointer-events: none;
+      }
+
+      /* Supaya isi sidebar tetap berada di atas efek background */
+      .sidebar .sidebar-brand,
+      .sidebar a,
+      .sidebar form,
+      .sidebar hr {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* =====================================================
+         JUDUL SIDEBAR
+         Nama sekolah dibuat seperti kotak kecil agar lebih menarik.
+      ===================================================== */
+      .sidebar .sidebar-brand {
+        position: relative;
+        z-index: 1;
+        margin-bottom: 28px;
+        padding: 12px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 116px;
+      }
+
+      .sidebar .sidebar-brand img {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        display: block;
+      }
+
+      /* =====================================================
+         MENU SIDEBAR
+         Link menu tetap sama, hanya dibuat lebih nyaman dilihat.
+      ===================================================== */
+      .sidebar .nav-link {
+        color: #d1d5db;
+        border-radius: 12px;
+        padding: 11px 14px;
+        margin-bottom: 8px;
+        display: block;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.25s ease;
+      }
+
+      /* Efek saat menu diarahkan mouse atau sedang aktif */
+      .sidebar .nav-link:hover,
+      .sidebar .nav-link.active {
+        background: linear-gradient(135deg, #2563eb, #10b981);
+        color: white;
+        transform: translateX(4px);
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.32);
+      }
+
+      .sidebar hr {
+        margin: 22px 0;
+        opacity: 0.3;
+      }
+
+      /* =====================================================
+         TOMBOL LOGOUT
+         Fungsi logout tetap POST seperti sebelumnya.
+         Hanya tampilan tombol dibuat lebih tegas.
+      ===================================================== */
+      .logout-btn {
+        margin-top: 10px;
+      }
+
+      .sidebar .btn-danger {
+        border: none;
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        box-shadow: 0 8px 18px rgba(239, 68, 68, 0.26);
+        transition: all 0.25s ease;
+      }
+
+      .sidebar .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(239, 68, 68, 0.36);
+      }
+
+      /* =====================================================
+         KONTEN UTAMA
+         Margin kiri tetap 250px karena sidebar fixed.
+      ===================================================== */
+      .main-content {
+        margin-left: 250px;
+        padding: 32px;
+      }
+
+      /* =====================================================
+         HEADER DASHBOARD
+         Area sambutan admin dibuat seperti glass card.
+      ===================================================== */
+      .main-content > .d-flex {
+        padding: 24px 26px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+      }
+
+      .main-content h3 {
+        font-weight: 800;
+        color: #0f172a;
+      }
+
+      .text-muted {
+        color: #64748b !important;
+      }
+
+      /* =====================================================
+         CARD UMUM
+         Semua card dibuat lebih modern dengan shadow halus.
+      ===================================================== */
+      .card {
+        border: none;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+      }
+
+      .card-body {
+        padding: 24px;
+      }
+
+      /* =====================================================
+         CARD STATISTIK
+         Digunakan untuk Total User, Jadwal, Dokumen, dan Laporan.
+      ===================================================== */
+      .stat-card {
+        height: 100%;
+        position: relative;
+        transition: all 0.28s ease;
+      }
+
+      /* Garis gradasi di atas card statistik */
+      .stat-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #2563eb, #10b981);
+      }
+
+      /* Efek naik sedikit saat card diarahkan mouse */
+      .stat-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 24px 50px rgba(15, 23, 42, 0.14);
+      }
+
+      .stat-card p {
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .stat-card h2 {
+        font-weight: 800;
+        margin-bottom: 12px;
+        color: #0f172a;
+      }
+
+      /* =====================================================
+         TOMBOL PRIMARY
+         Tombol Lihat Data tetap memakai link yang sama.
+      ===================================================== */
+      .btn-primary {
+        border: none;
+        border-radius: 12px;
+        padding: 8px 14px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+        transition: all 0.25s ease;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(37, 99, 235, 0.35);
+      }
+
+      /* =====================================================
+         HEADER CARD
+         Warna header card dibuat gradasi sesuai jenis datanya.
+      ===================================================== */
+      .card-header {
+        border: none;
+        padding: 16px 22px;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+      }
+
+      .card-header.bg-primary {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+      }
+
+      .card-header.bg-success {
+        background: linear-gradient(135deg, #16a34a, #059669) !important;
+      }
+
+      .card-header.bg-dark {
+        background: linear-gradient(135deg, #111827, #334155) !important;
+      }
+
+      /* =====================================================
+         TABEL
+         Tabel tetap memakai struktur Bootstrap.
+         Hanya warna, padding, dan hover yang diperbaiki.
+      ===================================================== */
+      .table-responsive {
+        border-radius: 18px;
+        overflow: hidden;
+      }
+
+      .table {
+        margin-bottom: 0;
+        background: white;
+      }
+
+      .table thead th,
+      .table th {
+        background: #0f172a;
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+        border: none;
+        padding: 14px;
+        white-space: nowrap;
+      }
+
+      .table tbody td {
+        padding: 13px 14px;
+        color: #334155;
+        font-size: 14px;
+        vertical-align: middle;
+        border-color: #e5e7eb;
+      }
+
+      .table-striped > tbody > tr:nth-of-type(odd) > * {
+        background-color: rgba(248, 250, 252, 0.9);
+      }
+
+      .table tbody tr {
+        transition: all 0.2s ease;
+      }
+
+      .table tbody tr:hover td {
+        background-color: #eff6ff;
+      }
+
+      /* =====================================================
+         BADGE ROLE
+         Badge USER dibuat lebih bulat dan modern.
+      ===================================================== */
+      .badge.bg-success {
+        background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-weight: 700;
+      }
+
+      /* =====================================================
+         INFORMASI SISTEM
+         Paragraf di bagian bawah dibuat lebih nyaman dibaca.
+      ===================================================== */
+      .card-body p {
+        line-height: 1.6;
+      }
+
+      /* =====================================================
+         RESPONSIVE
+         Saat layar kecil, sidebar pindah ke atas.
+         Ini menjaga dashboard tetap rapi di HP.
+      ===================================================== */
+      @media (max-width: 768px) {
+        .sidebar {
+          position: relative;
+          width: 100%;
+          min-height: auto;
+          border-radius: 0 0 24px 24px;
+          padding: 20px 15px;
+        }
+
+        .sidebar h4 {
+          margin-bottom: 18px;
+        }
+
+        .main-content {
+          margin-left: 0;
+          padding: 20px 14px;
+        }
+
+        .main-content > .d-flex {
+          padding: 20px;
+          border-radius: 20px;
+          display: block !important;
+        }
+
+        .card-body {
+          padding: 20px;
+        }
+
+        .table thead th,
+        .table tbody td,
+        .table th {
+          font-size: 13px;
+          padding: 11px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ===================================================== -->
+    <!-- SIDEBAR MENU ADMIN -->
+    <!-- ===================================================== -->
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <img src="/gambar/logo-mtsn22.jpg" alt="Logo MTsN 22 Jakarta Timur" />
+      </div>
+
+      <!-- Menu navigasi admin -->
+      <a href="/admin/dashboard" class="nav-link active">Dashboard</a>
+      <a href="/admin/user" class="nav-link">Data User</a>
+      <a href="/admin/jadwal" class="nav-link">Jadwal UAS</a>
+      <a href="/admin/dokumen" class="nav-link">Informasi UAS</a>
+      <a href="/admin/enkripsi" class="nav-link">Enkripsi File</a>
+      <a href="/admin/dekripsi" class="nav-link">Dekripsi File</a>
+      <a href="/admin/laporan" class="nav-link">Laporan</a>
+      <a href="/admin/pengaturan" class="nav-link">Pengaturan</a>
+
+      <hr class="border-secondary" />
+
+      <!-- Logout menggunakan POST agar sesuai Spring Security -->
+      <form th:action="@{/logout}" method="post">
+        <button type="submit" class="btn btn-danger w-100 logout-btn" onclick="return confirm('Yakin ingin logout?');">Logout</button>
+      </form>
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- KONTEN UTAMA DASHBOARD ADMIN -->
+    <!-- ===================================================== -->
+    <div class="main-content">
+      <!-- HEADER DASHBOARD -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h3 class="mb-1">Dashboard Admin</h3>
+
+          <!-- Menampilkan nama admin yang sedang login -->
+          <p class="text-muted mb-0">
+            Selamat datang,
+            <strong th:text="${user != null ? user.firstName + ' ' + user.lastName : 'Admin'}"> Admin </strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- STATISTIK DASHBOARD -->
+      <!-- Data jumlah berasal dari DashboardController -->
+      <!-- ===================================================== -->
+      <div class="row g-3 mb-4">
+        <!-- Total User dari tabel users dengan role USER -->
+        <div class="col-md-3">
+          <div class="card stat-card">
+            <div class="card-body">
+              <p class="text-muted mb-1">Total User</p>
+              <h2 th:text="${jumlahUser != null ? jumlahUser : 0}">0</h2>
+              <a href="/admin/user" class="btn btn-primary btn-sm"> Lihat Data </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Jadwal dari tabel jadwal_uas -->
+        <div class="col-md-3">
+          <div class="card stat-card">
+            <div class="card-body">
+              <p class="text-muted mb-1">Total Jadwal</p>
+              <h2 th:text="${jumlahJadwal != null ? jumlahJadwal : 0}">0</h2>
+              <a href="/admin/jadwal" class="btn btn-primary btn-sm"> Lihat Data </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Informasi UAS dari tabel dokumen_uas -->
+        <div class="col-md-3">
+          <div class="card stat-card">
+            <div class="card-body">
+              <p class="text-muted mb-1">Total Informasi UAS</p>
+              <h2 th:text="${jumlahDokumen != null ? jumlahDokumen : 0}">0</h2>
+              <a href="/admin/dokumen" class="btn btn-primary btn-sm"> Lihat Data </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Laporan dari tabel laporan_mts22 -->
+        <div class="col-md-3">
+          <div class="card stat-card">
+            <div class="card-body">
+              <p class="text-muted mb-1">Total Laporan</p>
+              <h2 th:text="${jumlahLaporan != null ? jumlahLaporan : 0}">0</h2>
+              <a href="/admin/laporan" class="btn btn-primary btn-sm"> Lihat Data </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- DATA USER TERDAFTAR -->
+      <!-- Data ini harus berasal dari tabel users dengan role USER -->
+      <!-- Controller mengirim data dengan nama: userTerbaru -->
+      <!-- ===================================================== -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">Data User Terdaftar</div>
+
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle">
+              <thead>
+                <tr>
+                  <th style="width: 60px">No</th>
+                  <th>Nama User</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <!-- Jika belum ada user dengan role USER -->
+                <tr th:if="${userTerbaru == null || #lists.isEmpty(userTerbaru)}">
+                  <td colspan="5" class="text-center text-muted">Belum ada user yang terdaftar.</td>
+                </tr>
+
+                <!-- Loop data user dari tabel users dengan role USER -->
+                <tr th:each="dataUser, nomor : ${userTerbaru}">
+                  <td th:text="${nomor.count}">1</td>
+
+                  <!-- Nama lengkap user -->
+                  <td th:text="${dataUser.firstName + ' ' + dataUser.lastName}">Nama User</td>
+
+                  <!-- Username user -->
+                  <td th:text="${dataUser.username}">username</td>
+
+                  <!-- Email user -->
+                  <td th:text="${dataUser.email}">email@gmail.com</td>
+
+                  <!-- Role user -->
+                  <td>
+                    <span class="badge bg-success" th:text="${dataUser.role}"> USER </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- DATA JADWAL UAS -->
+      <!-- Data ini berasal dari tabel jadwal_uas -->
+      <!-- Controller mengirim data dengan nama: jadwalTerbaru -->
+      <!-- ===================================================== -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">Jadwal UAS</div>
+
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle">
+              <thead>
+                <tr>
+                  <th style="width: 60px">No</th>
+                  <th>Hari</th>
+                  <th>Mata Pelajaran</th>
+                  <th>Kelas</th>
+                  <th>Jam</th>
+                  <th>Tempat</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <!-- Jika belum ada data jadwal UAS -->
+                <tr th:if="${jadwalTerbaru == null || #lists.isEmpty(jadwalTerbaru)}">
+                  <td colspan="6" class="text-center text-muted">Belum ada data jadwal UAS.</td>
+                </tr>
+
+                <!-- Loop data jadwal dari tabel jadwal_uas -->
+                <tr th:each="jadwal, nomor : ${jadwalTerbaru}">
+                  <td th:text="${nomor.count}">1</td>
+
+                  <!-- Hari pelaksanaan UAS -->
+                  <td th:text="${jadwal.hari}">Senin</td>
+
+                  <!-- Mata pelajaran -->
+                  <td th:text="${jadwal.mataPelajaran}">Matematika</td>
+
+                  <!-- Kelas -->
+                  <td th:text="${jadwal.kelas}">IX A</td>
+
+                  <!-- Waktu pelaksanaan -->
+                  <td th:text="${jadwal.jam}">07:30 - 09:00</td>
+
+                  <!-- Ruangan -->
+                  <td th:text="${jadwal.tempat}">Ruang 1</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- INFORMASI SISTEM -->
+      <!-- ===================================================== -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">Informasi Sistem</div>
+
+        <div class="card-body">
+          <p class="mb-1">Dashboard ini menampilkan data asli dari database.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+PERBAIKAN PROYEK SISTEM INFORMASI UAS MTsN 22 JAKARTA
+
+1. Buat database PostgreSQL baru dengan nama:
+   mtsn22_uas
+
+2. Program sudah diarahkan ke database tersebut melalui:
+   src/main/resources/application.yaml
+
+3. Jalankan proyek menggunakan VS Code atau perintah Windows:
+   .\mvnw.cmd clean spring-boot:run
+
+4. Tabel yang akan dibuat otomatis oleh Hibernate:
+   - users
+   - confirmation_token
+   - password_reset_tokens
+   - jadwal_uas
+   - dokumen_uas
+   - laporan_mts22
+
+5. Perbaikan utama:
+   - Istilah Data Siswa/Anggota diganti menjadi Data User.
+   - Sisa nama Sanggar dibersihkan.
+   - Jadwal Latihan diganti menjadi Jadwal UAS.
+   - Route laporan user: /admin/laporan/user/pdf
+   - Method PDF: generateUserReport(...)
+   - Jumlah user memakai atribut jumlahUser.
+   - Riwayat cetak PDF disimpan ke tabel laporan_mts22.
+   - Pembuatan PDF tetap berjalan jika logo tidak ditemukan atau rusak.
+
+6. Setelah program berjalan, refresh:
+   mtsn22_uas > Schemas > public > Tables

@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+
+    <!-- Judul halaman akan mengikuti data title dari controller -->
+    <title th:text="${title}">Halaman User</title>
+
+    <!-- Supaya tampilan responsif di laptop dan HP -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-light">
+    <div class="container py-4">
+      <!-- Tombol kembali ke dashboard user -->
+      <a href="/user/dashboard" class="btn btn-secondary mb-3"> Kembali ke Dashboard </a>
+
+      <!-- Card utama halaman user -->
+      <div class="card shadow-sm">
+        <!-- Header card -->
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0" th:text="${title}">Halaman User</h4>
+        </div>
+
+        <!-- Isi card -->
+        <div class="card-body">
+          <!-- Deskripsi halaman dari controller -->
+          <p th:text="${description}">Deskripsi halaman.</p>
+
+          <hr />
+
+          <!-- ===================================================== -->
+          <!-- HALAMAN PROFIL SAYA -->
+          <!-- Bagian ini tampil jika title bernilai Profil Saya -->
+          <!-- ===================================================== -->
+          <div th:if="${title == 'Profil Saya'}">
+            <table class="table table-bordered">
+              <tr>
+                <th>Nama</th>
+                <td th:text="${user != null ? user.firstName + ' ' + user.lastName : 'User'}">User</td>
+              </tr>
+
+              <tr>
+                <th>Username</th>
+                <td th:text="${user != null ? user.username : '-'}">username</td>
+              </tr>
+
+              <tr>
+                <th>Email</th>
+                <td th:text="${user != null ? user.email : '-'}">email@gmail.com</td>
+              </tr>
+
+              <tr>
+                <th>Role</th>
+                <td>USER</td>
+              </tr>
+
+              <tr>
+                <th>Status</th>
+                <td>
+                  <span class="badge bg-success">Aktif</span>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- ===================================================== -->
+          <!-- HALAMAN JADWAL UAS -->
+          <!-- Data jadwal diambil dari controller dengan nama jadwalList -->
+          <!-- Jika admin tambah/update jadwal, data otomatis muncul di sini -->
+          <!-- ===================================================== -->
+          <div th:if="${title == 'Jadwal UAS'}">
+            <!-- Tabel responsif agar tidak berantakan di layar kecil -->
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped align-middle">
+                <thead class="table-dark">
+                  <tr>
+                    <th style="width: 60px">No</th>
+                    <th>Hari</th>
+                    <th>Mata Pelajaran</th>
+                    <th>Kelas</th>
+                    <th>Jam</th>
+                    <th>Tempat</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <!-- 
+                    Jika jadwalList kosong atau null,
+                    tampilkan pesan bahwa belum ada jadwal.
+                  -->
+                  <tr th:if="${jadwalList == null || #lists.isEmpty(jadwalList)}">
+                    <td colspan="6" class="text-center text-muted">Belum ada data jadwal.</td>
+                  </tr>
+
+                  <!-- 
+                    Looping data jadwal dari database.
+                    jadwalList dikirim dari UserPageController.
+                  -->
+                  <tr th:each="jadwal, nomor : ${jadwalList}">
+                    <!-- Nomor otomatis -->
+                    <td th:text="${nomor.count}">1</td>
+
+                    <!-- Hari jadwal -->
+                    <td th:text="${jadwal.hari}">Senin</td>
+
+                    <!-- 
+                      Mata pelajaran.
+                      Mata pelajaran UAS.
+                    -->
+                    <td th:text="${jadwal.mataPelajaran}">Matematika</td>
+
+                    <!-- Kelas -->
+                    <td th:text="${jadwal.kelas}">IX A</td>
+
+                    <!-- Jam -->
+                    <td th:text="${jadwal.jam}">07:30 - 09:00</td>
+
+                    <!-- Tempat -->
+                    <td th:text="${jadwal.tempat}">Ruang 1</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ===================================================== -->
+          <!-- HALAMAN INFORMASI SEKOLAH -->
+          <!-- Bagian ini tampil jika title bernilai Informasi Sekolah -->
+          <!-- ===================================================== -->
+          <div th:if="${title == 'Informasi Sekolah'}">
+            <h5>MTSN 22 JAKARTA</h5>
+
+            <p>MTSN 22 Jakarta merupakan lembaga pendidikan yang menyediakan informasi akademik, jadwal kegiatan, dokumen, serta pengumuman yang dapat diakses oleh user melalui sistem ini.</p>
+
+            <h6>Alamat</h6>
+            <p>JL. Buni, Malaka, Kelurahan Cilangkap, Kecamatan Cipayung</p>
+
+            <h6>Kontak</h6>
+            <p>Email: MTSN 22 JAKARTA</p>
+
+            <h6>Pengumuman Terbaru</h6>
+            <ul>
+              <li>User diharapkan selalu mengecek jadwal UAS melalui sistem.</li>
+              <li>Jadwal dapat berubah sewaktu-waktu sesuai kebijakan sekolah.</li>
+              <li>User diharapkan memperhatikan jadwal dan informasi yang telah ditentukan.</li>
+            </ul>
+          </div>
+
+          <!-- ===================================================== -->
+          <!-- HALAMAN INFORMASI UAS -->
+          <!-- Data ini tetap memakai fitur Dokumen yang sudah ada -->
+          <!-- Admin update dari /admin/dokumen, user melihat sebagai Informasi UAS -->
+          <!-- ===================================================== -->
+          <div th:if="${title == 'Informasi UAS' || title == 'Dokumen Saya'}">
+            <table class="table table-bordered table-striped align-middle">
+              <thead class="table-dark">
+                <tr>
+                  <th style="width: 60px">No</th>
+                  <th>Judul Informasi</th>
+                  <th>Jenis File</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <!-- Jika belum ada data dokumen / informasi UAS -->
+                <tr th:if="${dokumenList == null || #lists.isEmpty(dokumenList)}">
+                  <td colspan="5" class="text-center text-muted">Belum ada informasi UAS yang tersedia.</td>
+                </tr>
+
+                <!-- Looping data dokumen dari database -->
+                <tr th:each="dokumen, nomor : ${dokumenList}">
+                  <td th:text="${nomor.count}">1</td>
+
+                  <!-- 
+          Judul informasi diambil dari field namaDokumen.
+          Kalau field entity lu bukan namaDokumen, lihat catatan di bawah.
+        -->
+                  <td th:text="${dokumen.namaDokumen}">Tata Tertib UAS</td>
+
+                  <!-- 
+          Jenis file dibuat manual agar tidak error,
+          karena entity DokumenMts22 lu tidak punya field jenisDokumen.
+        -->
+                  <td>PDF / Dokumen</td>
+
+                  <!-- Status informasi -->
+                  <td>
+                    <span class="badge bg-success">Tersedia</span>
+                  </td>
+
+                  <!-- Tombol download -->
+                  <td>
+                    <a th:href="@{/user/dokumen/download/{id}(id=${dokumen.id})}" class="btn btn-success btn-sm"> Download </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard User</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background:
+          radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 35%), radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.16), transparent 35%), linear-gradient(135deg, #eef4ff 0%, #f8fafc 50%, #ecfdf5 100%);
+        color: #1f2937;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      /* SIDEBAR */
+      .sidebar {
+        width: 250px;
+        min-height: 100vh;
+        background: linear-gradient(180deg, #0f172a 0%, #1e293b 55%, #111827 100%);
+        color: white;
+        position: fixed;
+        left: 0;
+        top: 0;
+        padding: 24px 16px;
+        box-shadow: 8px 0 30px rgba(15, 23, 42, 0.22);
+        z-index: 10;
+      }
+
+      .sidebar::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top, rgba(59, 130, 246, 0.24), transparent 35%), radial-gradient(circle at bottom, rgba(16, 185, 129, 0.16), transparent 35%);
+        pointer-events: none;
+      }
+
+      .sidebar .sidebar-brand,
+      .sidebar a,
+      .sidebar form,
+      .sidebar hr {
+        position: relative;
+        z-index: 1;
+      }
+
+      .sidebar .sidebar-brand {
+        position: relative;
+        z-index: 1;
+        margin-bottom: 28px;
+        padding: 12px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 116px;
+      }
+
+      .sidebar .sidebar-brand img {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        display: block;
+      }
+
+      .sidebar .nav-link {
+        color: #d1d5db;
+        border-radius: 12px;
+        padding: 11px 14px;
+        margin-bottom: 8px;
+        display: block;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.25s ease;
+      }
+
+      .sidebar .nav-link:hover,
+      .sidebar .nav-link.active {
+        background: linear-gradient(135deg, #2563eb, #10b981);
+        color: white;
+        transform: translateX(4px);
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.32);
+      }
+
+      .sidebar hr {
+        margin: 22px 0;
+        opacity: 0.3;
+      }
+
+      .sidebar .btn-danger {
+        border: none;
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        box-shadow: 0 8px 18px rgba(239, 68, 68, 0.26);
+        transition: all 0.25s ease;
+      }
+
+      .sidebar .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(239, 68, 68, 0.36);
+      }
+
+      /* CONTENT */
+      .main-content {
+        margin-left: 250px;
+        padding: 32px;
+      }
+
+      .main-content > .mb-4 {
+        padding: 24px 26px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.82);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+      }
+
+      .main-content h3 {
+        font-weight: 800;
+        color: #0f172a;
+      }
+
+      .text-muted {
+        color: #64748b !important;
+      }
+
+      /* CARD */
+      .card {
+        border: none;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+      }
+
+      .menu-card {
+        height: 100%;
+        transition: all 0.28s ease;
+        position: relative;
+      }
+
+      .menu-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #2563eb, #10b981);
+      }
+
+      .menu-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 24px 50px rgba(15, 23, 42, 0.14);
+      }
+
+      .card-body {
+        padding: 24px;
+      }
+
+      .card-body h5 {
+        font-weight: 800;
+        color: #111827;
+        margin-bottom: 10px;
+      }
+
+      .card-body p {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      /* BUTTON */
+      .btn-primary {
+        border: none;
+        border-radius: 12px;
+        padding: 8px 14px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+        transition: all 0.25s ease;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(37, 99, 235, 0.35);
+      }
+
+      /* TABLE */
+      .table-responsive,
+      .card.shadow-sm {
+        border-radius: 22px;
+        overflow: hidden;
+      }
+
+      .table {
+        margin-bottom: 0;
+        background: white;
+      }
+
+      .table thead th {
+        background: #0f172a;
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+        border: none;
+        padding: 14px;
+        white-space: nowrap;
+      }
+
+      .table tbody td {
+        padding: 13px 14px;
+        color: #334155;
+        font-size: 14px;
+        vertical-align: middle;
+        border-color: #e5e7eb;
+      }
+
+      .table-striped > tbody > tr:nth-of-type(odd) > * {
+        background-color: rgba(248, 250, 252, 0.9);
+      }
+
+      .table tbody tr {
+        transition: all 0.2s ease;
+      }
+
+      .table tbody tr:hover td {
+        background-color: #eff6ff;
+      }
+
+      .card-header {
+        border: none;
+        padding: 16px 22px;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+      }
+
+      .card-header.bg-success {
+        background: linear-gradient(135deg, #16a34a, #059669) !important;
+      }
+
+      .badge.bg-success {
+        background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-weight: 700;
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 768px) {
+        .sidebar {
+          position: relative;
+          width: 100%;
+          min-height: auto;
+          border-radius: 0 0 24px 24px;
+          padding: 20px 15px;
+        }
+
+        .sidebar h4 {
+          margin-bottom: 18px;
+        }
+
+        .main-content {
+          margin-left: 0;
+          padding: 20px 14px;
+        }
+
+        .main-content > .mb-4 {
+          padding: 20px;
+          border-radius: 20px;
+        }
+
+        .card-body {
+          padding: 20px;
+        }
+
+        .table thead th,
+        .table tbody td {
+          font-size: 13px;
+          padding: 11px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <img src="/gambar/logo-mtsn22.jpg" alt="Logo MTsN 22 Jakarta Timur" />
+      </div>
+
+      <a href="/user/dashboard" class="nav-link active">Dashboard</a>
+      <a href="/user/profil" class="nav-link">Profil Saya</a>
+      <a href="/user/jadwal" class="nav-link">Jadwal UAS</a>
+      <a href="/user/informasi" class="nav-link">Informasi MTSN 22</a>
+      <a href="/user/dokumen" class="nav-link">Informasi UAS</a>
+      <a href="/user/enkripsi" class="nav-link">Enkripsi File</a>
+
+      <hr class="border-secondary" />
+
+      <form th:action="@{/logout}" method="post">
+        <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Yakin ingin logout?');">Logout</button>
+      </form>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="main-content">
+      <div class="mb-4">
+        <h3 class="mb-1">Dashboard User</h3>
+        <p class="text-muted mb-0">
+          Selamat datang,
+          <strong th:text="${user != null ? user.firstName + ' ' + user.lastName : 'User'}"> User </strong>
+        </p>
+      </div>
+
+      <!-- MENU CARD -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="card menu-card">
+            <div class="card-body">
+              <h5>Profil Saya</h5>
+              <p class="text-muted">Lihat informasi akun dan profil pengguna.</p>
+              <a href="/user/profil" class="btn btn-primary btn-sm"> Buka Profil </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card menu-card">
+            <div class="card-body">
+              <h5>Jadwal UAS</h5>
+              <p class="text-muted">Lihat jadwal UAS yang tersedia.</p>
+              <a href="/user/jadwal" class="btn btn-primary btn-sm"> Lihat Jadwal </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card menu-card">
+            <div class="card-body">
+              <h5>Dokumen Saya</h5>
+              <p class="text-muted">Lihat dokumen yang tersedia untuk pengguna.</p>
+              <a href="/user/dokumen" class="btn btn-primary btn-sm"> Lihat Dokumen </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================== -->
+      <!-- JADWAL UAS TERBARU DI DASHBOARD USER -->
+      <!-- Bagian ini menampilkan data jadwal dari database -->
+      <!-- Data dikirim dari DashboardController dengan nama jadwalTerbaru -->
+      <!-- ===================================================== -->
+      <div class="card shadow-sm mb-4">
+        <!-- Header card jadwal -->
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+          <!-- Judul card -->
+          <span>Jadwal UAS Terbaru</span>
+
+          <!-- Tombol menuju halaman jadwal lengkap di sidebar user -->
+          <a href="/user/jadwal" class="btn btn-light btn-sm">Lihat Semua</a>
+        </div>
+
+        <!-- Isi card -->
+        <div class="card-body">
+          <!-- Table responsive agar tetap rapi di layar kecil -->
+          <div class="table-responsive">
+            <!-- Tabel jadwal UAS -->
+            <table class="table table-bordered table-striped align-middle">
+              <thead>
+                <tr>
+                  <th style="width: 60px">No</th>
+                  <th>Hari</th>
+                  <th>Mata Pelajaran</th>
+                  <th>Kelas</th>
+                  <th>Jam</th>
+                  <th>Tempat</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <!-- Jika data jadwal kosong, tampilkan pesan -->
+                <tr th:if="${jadwalTerbaru == null || #lists.isEmpty(jadwalTerbaru)}">
+                  <td colspan="6" class="text-center text-muted">Belum ada data jadwal UAS.</td>
+                </tr>
+
+                <!-- Looping data jadwal dari database -->
+                <tr th:each="jadwal, nomor : ${jadwalTerbaru}">
+                  <!-- Nomor urut otomatis -->
+                  <td th:text="${nomor.count}">1</td>
+
+                  <!-- Menampilkan hari -->
+                  <td th:text="${jadwal.hari}">Senin</td>
+
+                  <!-- Menampilkan mata pelajaran -->
+                  <!-- Mata pelajaran UAS -->
+                  <td th:text="${jadwal.mataPelajaran}">Matematika</td>
+
+                  <!-- Menampilkan kelas -->
+                  <td th:text="${jadwal.kelas}">IX A</td>
+
+                  <!-- Menampilkan jam -->
+                  <td th:text="${jadwal.jam}">07:30 - 09:00</td>
+
+                  <!-- Menampilkan tempat -->
+                  <td th:text="${jadwal.tempat}">Ruang 1</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOKUMEN -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">Dokumen Tersedia</div>
+
+        <div class="card-body">
+          <table class="table table-bordered table-striped align-middle">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama Dokumen</th>
+                <th>Jenis</th>
+                <th>Tanggal Upload</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr th:if="${#lists.isEmpty(dokumenList)}">
+                <td colspan="5" class="text-center text-muted">Belum ada dokumen.</td>
+              </tr>
+
+              <tr th:each="dokumen, nomor : ${dokumenList}">
+                <td th:text="${nomor.count}">1</td>
+                <td th:text="${dokumen.namaDokumen}">Nama Dokumen</td>
+                <td th:text="${dokumen.jenis}">Jenis</td>
+                <td th:text="${dokumen.tanggalUpload}">Tanggal Upload</td>
+                <td>
+                  <span class="badge bg-success" th:text="${dokumen.status}"> Tersedia </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

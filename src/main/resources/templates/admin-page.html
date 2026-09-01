@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title th:text="${title}">Halaman Admin</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-light">
+    <div class="container py-4">
+      <a href="/admin/dashboard" class="btn btn-secondary mb-3"> Kembali ke Dashboard </a>
+
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0" th:text="${title}">Halaman Admin</h4>
+        </div>
+
+        <div class="card-body">
+          <p th:text="${description}">MTSN 22 JAKARTA</p>
+
+          <hr />
+
+          <!-- ===================================================== -->
+          <!-- HALAMAN DATA USER -->
+          <!-- ===================================================== -->
+          <div th:if="${page == 'user'}">
+            <div class="card shadow-sm">
+              <div class="card-header bg-primary text-white">Daftar User Terdaftar</div>
+
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped align-middle">
+                    <thead>
+                      <tr>
+                        <th style="width: 60px">No</th>
+                        <th>Nama User</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr th:if="${userList == null || #lists.isEmpty(userList)}">
+                        <td colspan="5" class="text-center text-muted">Belum ada user yang terdaftar.</td>
+                      </tr>
+
+                      <tr th:each="dataUser, nomor : ${userList}">
+                        <td th:text="${nomor.count}">1</td>
+
+                        <td th:text="${dataUser.firstName + ' ' + dataUser.lastName}">Nama User</td>
+
+                        <td th:text="${dataUser.username}">username</td>
+
+                        <td th:text="${dataUser.email}">email@gmail.com</td>
+
+                        <td>
+                          <span class="badge bg-success" th:text="${dataUser.role}"> USER </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===================================================== -->
+          <!-- HALAMAN JADWAL UAS -->
+          <!-- ===================================================== -->
+          <div th:if="${page == 'jadwal'}">
+            <a href="/admin/jadwal/tambah" class="btn btn-primary mb-3"> Tambah Jadwal </a>
+
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped align-middle">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Hari</th>
+                    <th>Mata Pelajaran</th>
+                    <th>Kelas</th>
+                    <th>Jam</th>
+                    <th>Tempat</th>
+                    <th style="width: 170px">Aksi</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr th:if="${jadwalList == null || #lists.isEmpty(jadwalList)}">
+                    <td colspan="7" class="text-center text-muted">Belum ada data jadwal UAS.</td>
+                  </tr>
+
+                  <tr th:each="jadwal, nomor : ${jadwalList}">
+                    <td th:text="${nomor.count}">1</td>
+                    <td th:text="${jadwal.hari}">Senin</td>
+                    <td th:text="${jadwal.mataPelajaran}">Matematika</td>
+                    <td th:text="${jadwal.kelas}">Anak-anak</td>
+                    <td th:text="${jadwal.jam}">16:00 - 17:30</td>
+                    <td th:text="${jadwal.tempat}">Studio Utama</td>
+
+                    <td>
+                      <a th:href="@{/admin/jadwal/edit/{id}(id=${jadwal.id})}" class="btn btn-warning btn-sm"> Edit </a>
+
+                      <a th:href="@{/admin/jadwal/hapus/{id}(id=${jadwal.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus jadwal ini?');"> Hapus </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ===================================================== -->
+          <!-- FORM TAMBAH / EDIT JADWAL UAS -->
+          <!-- ===================================================== -->
+          <div th:if="${page == 'form-jadwal'}">
+            <form th:action="@{/admin/jadwal/simpan}" th:object="${jadwal}" method="post">
+              <input type="hidden" th:field="*{id}" />
+
+              <div class="mb-3">
+                <label class="form-label">Hari</label>
+                <input type="text" th:field="*{hari}" class="form-control" placeholder="Contoh: Senin" required />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Mata Pelajaran</label>
+                <input type="text" th:field="*{mataPelajaran}" class="form-control" placeholder="Contoh: Matematika" required />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Kelas</label>
+                <input type="text" th:field="*{kelas}" class="form-control" placeholder="Contoh: Anak-anak" required />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Jam</label>
+                <input type="text" th:field="*{jam}" class="form-control" placeholder="Contoh: 16:00 - 17:30" required />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Tempat</label>
+                <input type="text" th:field="*{tempat}" class="form-control" placeholder="Contoh: Studio Utama" required />
+              </div>
+
+              <button type="submit" class="btn btn-primary">Simpan</button>
+              <a href="/admin/jadwal" class="btn btn-secondary">Batal</a>
+            </form>
+          </div>
+
+          <!-- ===================================================== -->
+          <!-- HALAMAN DOKUMEN -->
+          <!-- ===================================================== -->
+          <div th:if="${page == 'dokumen'}">
+            <a href="/admin/dokumen/tambah" class="btn btn-primary mb-3"> Upload Dokumen </a>
+
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped align-middle">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Nama Dokumen</th>
+                    <th>Jenis</th>
+                    <th>Tanggal Upload</th>
+                    <th>Status</th>
+                    <th style="width: 260px">Aksi</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr th:if="${dokumenList == null || #lists.isEmpty(dokumenList)}">
+                    <td colspan="6" class="text-center text-muted">Belum ada dokumen yang diupload.</td>
+                  </tr>
+
+                  <tr th:each="dokumen, nomor : ${dokumenList}">
+                    <td th:text="${nomor.count}">1</td>
+                    <td th:text="${dokumen.namaDokumen}">Dokumen.pdf</td>
+                    <td th:text="${dokumen.jenis}">PDF</td>
+                    <td th:text="${dokumen.tanggalUpload}">2026-04-26</td>
+                    <td>
+                      <span class="badge bg-success" th:text="${dokumen.status}"> Tersedia </span>
+                    </td>
+                    <td>
+                      <a th:href="@{/admin/dokumen/download/{id}(id=${dokumen.id})}" class="btn btn-success btn-sm"> Download </a>
+
+                      <a th:href="@{/admin/dokumen/edit/{id}(id=${dokumen.id})}" class="btn btn-warning btn-sm"> Edit </a>
+
+                      <a th:href="@{/admin/dokumen/hapus/{id}(id=${dokumen.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus dokumen ini?');"> Hapus </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ===================================================== -->
+          <!-- FORM UPLOAD / EDIT DOKUMEN -->
+          <!-- ===================================================== -->
+          <div th:if="${page == 'form-dokumen'}">
+            <form th:action="@{/admin/dokumen/simpan}" th:object="${dokumen}" method="post" enctype="multipart/form-data">
+              <input type="hidden" th:field="*{id}" />
+
+              <div class="mb-3">
+                <label class="form-label">Nama Dokumen</label>
+                <input type="text" th:field="*{namaDokumen}" class="form-control" placeholder="Contoh: Laporan Bulanan.pdf" required />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Jenis Dokumen</label>
+                <input type="text" th:field="*{jenis}" class="form-control" placeholder="Contoh: PDF, DOCX, XLSX" />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Status</label>
+                <select th:field="*{status}" class="form-select">
+                  <option value="Tersedia">Tersedia</option>
+                  <option value="Tidak Tersedia">Tidak Tersedia</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Upload File</label>
+                <input type="file" name="file" class="form-control" th:required="${dokumen.id == null}" />
+
+                <small class="text-muted" th:if="${dokumen.id != null}"> Kosongkan jika tidak ingin mengganti file lama. </small>
+              </div>
+
+              <button type="submit" class="btn btn-primary">Simpan</button>
+              <a href="/admin/dokumen" class="btn btn-secondary">Batal</a>
+            </form>
+          </div>
+
+          <!-- ===================================================== -->
+          <!-- HALAMAN LAPORAN OTOMATIS -->
+          <!-- ===================================================== -->
+          <div th:if="${page == 'laporan'}">
+            <div class="alert alert-info mb-4">
+              Laporan dibuat otomatis berdasarkan data yang tersimpan di database. Klik tombol
+              <strong>Cetak PDF</strong> untuk membuka preview PDF di tab baru.
+            </div>
+
+            <div class="row g-4">
+              <div class="col-lg-6 col-md-6">
+                <div class="card h-100 shadow-sm border-0">
+                  <div class="card-body">
+                    <h5 class="card-title">Laporan Data User</h5>
+                    <p class="card-text text-muted">
+                      Berisi daftar seluruh user yang terdaftar pada sistem.
+                    </p>
+                    <p class="mb-3">
+                      Total data: <strong th:text="${jumlahUser}">0</strong> user
+                    </p>
+                    <a th:href="@{/admin/laporan/user/pdf}" target="_blank" class="btn btn-primary">
+                      Cetak PDF
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-6 col-md-6">
+                <div class="card h-100 shadow-sm border-0">
+                  <div class="card-body">
+                    <h5 class="card-title">Laporan Jadwal UAS</h5>
+                    <p class="card-text text-muted">
+                      Berisi seluruh jadwal UAS yang tersimpan pada sistem.
+                    </p>
+                    <p class="mb-3">
+                      Total data: <strong th:text="${jumlahJadwal}">0</strong> jadwal
+                    </p>
+                    <a th:href="@{/admin/laporan/jadwal/pdf}" target="_blank" class="btn btn-primary">
+                      Cetak PDF
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ===================================================== -->
+          <!-- HALAMAN PENGATURAN -->
+          <!-- ===================================================== -->
+          <div th:if="${page == 'pengaturan'}">
+            <form>
+              <div class="mb-3">
+                <label class="form-label">Nama Sistem</label>
+                <input type="text" class="form-control" value="Sistem Informasi MTSN 22 JAKARTA" />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Email Admin</label>
+                <input type="email" class="form-control" value="admin@gmail.com" />
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Status Sistem</label>
+                <select class="form-select">
+                  <option>Aktif</option>
+                  <option>Maintenance</option>
+                </select>
+              </div>
+
+              <button type="button" class="btn btn-primary">Simpan Pengaturan</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

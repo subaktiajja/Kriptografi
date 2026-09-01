@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard AES-128</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        background: #f4f7fb;
+        color: #333;
+      }
+
+      .navbar {
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        color: white;
+        padding: 18px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .navbar h2 {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .logout-btn {
+        background: white;
+        color: #1e3c72;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 20px;
+      }
+
+      .hero {
+        background: white;
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        margin-bottom: 24px;
+      }
+
+      .hero h1 {
+        margin-top: 0;
+        color: #1e3c72;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        background: white;
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      .card h3 {
+        margin-top: 0;
+        color: #1e3c72;
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+
+      input[type='file'],
+      input[type='text'] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d9d9d9;
+        border-radius: 10px;
+      }
+
+      button {
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        color: white;
+        border: none;
+        padding: 12px 18px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .info-box {
+        background: #eef4ff;
+        border-left: 5px solid #2a5298;
+        padding: 14px;
+        border-radius: 10px;
+        margin-top: 10px;
+      }
+
+      .alert-success {
+        background: #e9f9ee;
+        color: #1d6b39;
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
+
+      .alert-danger {
+        background: #fff0f0;
+        color: #b42318;
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+      <h2>AES-128 File Security Dashboard</h2>
+      <form th:action="@{/logout}" method="post">
+        <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit" class="logout-btn">Logout</button>
+      </form>
+    </div>
+
+    <div class="container">
+      <div class="hero">
+        <h1>Welcome to Your Security App</h1>
+        <p>Dashboard ini dipakai untuk upload file, lalu melakukan proses enkripsi dan dekripsi file menggunakan algoritma AES-128.</p>
+      </div>
+
+      <div th:if="${success}" class="alert-success" th:text="${success}"></div>
+      <div th:if="${error}" class="alert-danger" th:text="${error}"></div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Encrypt File</h3>
+          <form th:action="@{/file/encrypt}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+              <label>Select File</label>
+              <input type="file" name="file" required />
+            </div>
+
+            <div class="form-group">
+              <label>AES Key (16 karakter)</label>
+              <input type="text" name="secretKey" maxlength="16" placeholder="Contoh: abcdef1234567890" required />
+            </div>
+
+            <button type="submit">Encrypt File</button>
+
+            <div class="info-box">Gunakan key tepat 16 karakter untuk AES-128.</div>
+
+            <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+          </form>
+        </div>
+
+        <div class="card">
+          <h3>Decrypt File</h3>
+          <form th:action="@{/file/decrypt}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+              <label>Select Encrypted File</label>
+              <input type="file" name="file" required />
+            </div>
+
+            <div class="form-group">
+              <label>AES Key (16 karakter)</label>
+              <input type="text" name="secretKey" maxlength="16" placeholder="Masukkan key yang sama" required />
+            </div>
+
+            <button type="submit">Decrypt File</button>
+
+            <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

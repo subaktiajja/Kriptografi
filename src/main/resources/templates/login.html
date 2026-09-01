@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login - MTSN 22 JAKARTA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <style>
+      :root {
+        --primary: #0b2f78;
+        --gold: #d5962f;
+        --soft-gold: #fff4e4;
+        --light: #f8fafd;
+        --text: #26324d;
+        --muted: #6b7280;
+        --border: #e8edf5;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: radial-gradient(circle at top left, rgba(213, 150, 47, 0.2), transparent 32%), radial-gradient(circle at bottom right, rgba(11, 47, 120, 0.18), transparent 35%), linear-gradient(135deg, #f8fafd, #eef3fb);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text);
+        padding: 20px;
+      }
+
+      .login-wrapper {
+        width: 100%;
+        max-width: 980px;
+        min-height: 560px;
+        background: #ffffff;
+        border-radius: 26px;
+        overflow: hidden;
+        box-shadow: 0 22px 55px rgba(11, 47, 120, 0.16);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border: 1px solid var(--border);
+      }
+
+      .login-left {
+        background: linear-gradient(135deg, rgba(11, 47, 120, 0.95), rgba(11, 47, 120, 0.86)), radial-gradient(circle at top, rgba(213, 150, 47, 0.35), transparent 50%);
+        color: white;
+        padding: 48px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .login-left::after {
+        content: '✦';
+        position: absolute;
+        right: -20px;
+        bottom: -65px;
+        font-size: 230px;
+        color: rgba(255, 255, 255, 0.08);
+        line-height: 1;
+      }
+
+      .brand-box {
+        position: relative;
+        z-index: 2;
+      }
+
+      .brand-logo {
+        width: 68px;
+        height: 68px;
+        border-radius: 18px;
+        background: rgba(255, 244, 228, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34px;
+        color: var(--gold);
+        margin-bottom: 18px;
+      }
+
+      .brand-box h1 {
+        font-size: 31px;
+        font-weight: 900;
+        margin: 0 0 10px;
+        line-height: 1.2;
+      }
+
+      .brand-box p {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 15px;
+        line-height: 1.7;
+        margin: 0;
+      }
+
+      .feature-list {
+        position: relative;
+        z-index: 2;
+      }
+
+      .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 16px;
+        color: rgba(255, 255, 255, 0.88);
+        font-size: 14px;
+      }
+
+      .feature-item i {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: rgba(213, 150, 47, 0.22);
+        color: #ffd28c;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .login-right {
+        padding: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .form-box {
+        width: 100%;
+        max-width: 380px;
+      }
+
+      .form-box h2 {
+        color: var(--primary);
+        font-weight: 900;
+        font-size: 32px;
+        margin-bottom: 8px;
+      }
+
+      .form-box .subtitle {
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 28px;
+      }
+
+      .form-label {
+        font-weight: 700;
+        color: #33415f;
+        font-size: 14px;
+      }
+
+      .input-group-custom {
+        position: relative;
+        margin-bottom: 18px;
+      }
+
+      .input-group-custom i {
+        position: absolute;
+        top: 43px;
+        left: 15px;
+        color: var(--muted);
+        font-size: 18px;
+        z-index: 5;
+      }
+
+      .form-control {
+        height: 48px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        padding-left: 44px;
+        font-size: 14px;
+        background: #fbfcff;
+      }
+
+      .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(11, 47, 120, 0.08);
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 41px;
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        font-size: 18px;
+        z-index: 6;
+      }
+
+      .password-input {
+        padding-right: 46px;
+      }
+
+      .btn-login {
+        width: 100%;
+        height: 48px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--primary), #123f94);
+        color: white;
+        font-weight: 800;
+        margin-top: 8px;
+        box-shadow: 0 10px 22px rgba(11, 47, 120, 0.22);
+      }
+
+      .btn-login:hover {
+        background: linear-gradient(135deg, #08245d, var(--primary));
+        color: white;
+      }
+
+      .alert-custom {
+        border-radius: 12px;
+        font-size: 14px;
+        padding: 12px 14px;
+        margin-bottom: 18px;
+      }
+
+      .bottom-links {
+        margin-top: 22px;
+        text-align: center;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      .bottom-links a {
+        color: var(--primary);
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .bottom-links a:hover {
+        color: var(--gold);
+      }
+
+      .forgot-row {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: -6px;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .forgot-row a {
+        color: var(--primary);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .forgot-row a:hover {
+        color: var(--gold);
+      }
+
+      .mobile-brand {
+        display: none;
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      .mobile-brand .brand-logo {
+        margin: 0 auto 12px;
+        color: var(--gold);
+        background: var(--soft-gold);
+      }
+
+      .mobile-brand h1 {
+        color: var(--primary);
+        font-weight: 900;
+        font-size: 24px;
+        margin: 0;
+      }
+
+      @media (max-width: 850px) {
+        .login-wrapper {
+          grid-template-columns: 1fr;
+          max-width: 460px;
+          min-height: auto;
+        }
+
+        .login-left {
+          display: none;
+        }
+
+        .login-right {
+          padding: 34px 26px;
+        }
+
+        .mobile-brand {
+          display: block;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="login-wrapper">
+      <div class="login-left">
+        <div class="brand-box">
+          <div class="brand-logo">
+            <i class="bi bi-flower1"></i>
+          </div>
+          <h1>MTSN 22 JAKARTA</h1>
+          <p>Sistem informasi untuk mengelola jadwal, ujian, dokumen, dan keamanan file MTSN 22 JAKARTA.</p>
+        </div>
+
+        <div class="feature-list">
+          <div class="feature-item">
+            <i class="bi bi-shield-lock-fill"></i>
+            <span>Login multi role untuk Admin dan User</span>
+          </div>
+          <div class="feature-item">
+            <i class="bi bi-lock-fill"></i>
+            <span>Password diamankan menggunakan BCrypt</span>
+          </div>
+          <div class="feature-item">
+            <i class="bi bi-file-earmark-lock-fill"></i>
+            <span>Fitur enkripsi dan dekripsi file AES</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="login-right">
+        <div class="form-box">
+          <div class="mobile-brand">
+            <div class="brand-logo">
+              <i class="bi bi-flower1"></i>
+            </div>
+            <h1>Sistem Informasi UAS</h1>
+          </div>
+
+          <h2>Login</h2>
+          <p class="subtitle">Masuk ke akun Anda untuk melanjutkan.</p>
+
+          <div th:if="${param.error}" class="alert alert-danger alert-custom">Username/email atau password salah.</div>
+
+          <div th:if="${error}" class="alert alert-danger alert-custom" th:text="${error}">Username atau password salah.</div>
+
+          <div th:if="${param.logout}" class="alert alert-success alert-custom">Anda berhasil logout.</div>
+
+          <div th:if="${success}" class="alert alert-success alert-custom" th:text="${success}">Password berhasil diubah.</div>
+
+          <form th:action="@{/login}" method="post">
+            <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+            <div class="input-group-custom">
+              <label class="form-label">Username atau Email</label>
+              <i class="bi bi-person"></i>
+              <input type="text" name="username" class="form-control" placeholder="Masukkan username atau email" required />
+            </div>
+
+            <div class="input-group-custom">
+              <label class="form-label">Password</label>
+              <i class="bi bi-key"></i>
+              <input type="password" name="password" id="password" class="form-control password-input" placeholder="Masukkan password" required />
+              <button type="button" class="password-toggle" onclick="togglePassword()">
+                <i class="bi bi-eye" id="eyeIcon"></i>
+              </button>
+            </div>
+
+            <div class="forgot-row">
+              <a th:href="@{/forgot-password}">Lupa password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-login">
+              <i class="bi bi-box-arrow-in-right me-2"></i>
+              Masuk
+            </button>
+          </form>
+
+          <div class="bottom-links">
+            Belum punya akun?
+            <a th:href="@{/register}">Daftar sekarang</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function togglePassword() {
+        const password = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        if (password.type === 'password') {
+          password.type = 'text';
+          eyeIcon.classList.remove('bi-eye');
+          eyeIcon.classList.add('bi-eye-slash');
+        } else {
+          password.type = 'password';
+          eyeIcon.classList.remove('bi-eye-slash');
+          eyeIcon.classList.add('bi-eye');
+        }
+      }
+    </script>
+  </body>
+</html>
